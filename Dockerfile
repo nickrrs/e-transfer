@@ -21,6 +21,10 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+COPY . /var/www
+
+RUN chown -R www-data:www-data /var/www/storage
+
 WORKDIR /var/www
 
 EXPOSE 9000
