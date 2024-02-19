@@ -10,6 +10,9 @@ class Seller extends Model
     use HasFactory;
 
     protected $table = 'sellers';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
 
     /**
      * The attributes that are mass assignable.

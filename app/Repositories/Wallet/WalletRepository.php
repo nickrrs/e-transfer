@@ -13,11 +13,18 @@ class WalletRepository implements WalletRepositoryInterface
         $wallet = new Wallet();
 
         $wallet->id = Uuid::uuid4()->toString();
+        $wallet->owner_id = $entity->id;
         $wallet->owner()->associate($entity);
         $wallet->balance = 0;
 
         $wallet->save();
 
         return $wallet;
+    }
+
+    public function delete($entity)
+    {
+        $wallet = Wallet::where('owner_id', $entity->id)->firstOrFail();
+        $wallet->delete();
     }
 }

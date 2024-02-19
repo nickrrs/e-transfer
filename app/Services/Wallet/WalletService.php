@@ -19,4 +19,9 @@ class WalletService implements WalletServiceInterface
     {
         return $this->walletRepository->create($entity);
     }
+
+    public function deleteWallet($entity)
+    {
+        return $this->walletRepository->delete($entity);
+    }
 }

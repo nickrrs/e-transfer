@@ -41,7 +41,13 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
-        //
+        try{
+            $this->walletService->deleteWallet($user);
+        } catch(QueryException $queryException) {
+            Log::critical("[Error while trying to delete deleted user's wallet]", [
+                'message' => $queryException->getMessage()
+            ]);
+        }
     }
 
     /**

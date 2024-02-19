@@ -10,7 +10,9 @@ class Transaction extends Model
     use HasFactory;
 
     protected $table = 'transactions';
-
+    protected $keyType = 'string';
+    public $incrementing = false;
+    
     protected $fillable = [
         'id',
         'payee_wallet_id',

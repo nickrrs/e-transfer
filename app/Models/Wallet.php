@@ -10,6 +10,8 @@ class Wallet extends Model
     use HasFactory;
 
     protected $table = 'wallets';
+    protected $keyType = 'string';
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.

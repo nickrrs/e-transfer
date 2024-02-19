@@ -40,7 +40,13 @@ class SellerObserver
      */
     public function deleted(Seller $seller): void
     {
-        //
+        try{
+            $this->walletService->deleteWallet($seller);
+        } catch(QueryException $queryException) {
+            Log::critical("[Error while trying to delete deleted seller's wallet]", [
+                'message' => $queryException->getMessage()
+            ]);
+        }
     }
 
     /**
