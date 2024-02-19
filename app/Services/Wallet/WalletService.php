@@ -20,6 +20,11 @@ class WalletService implements WalletServiceInterface
         return $this->walletRepository->create($entity);
     }
 
+    public function findOwnerWallet($id)
+    {
+        return $this->walletRepository->indexByOwner($id);
+    }
+    
     public function deleteWallet($entity)
     {
         return $this->walletRepository->delete($entity);
