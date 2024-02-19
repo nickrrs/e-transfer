@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 
-class User extends Authenticatable
+class Seller extends Model
 {
     use HasFactory;
 
-    protected $table = 'users';
+    protected $table = 'sellers';
 
     /**
      * The attributes that are mass assignable.
@@ -23,16 +23,7 @@ class User extends Authenticatable
         'email',
         'password'
     ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-    ];
-
+    
     public function wallet()
     {
         return $this->morphOne(Wallet::class, 'owner');
