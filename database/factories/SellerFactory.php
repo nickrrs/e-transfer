@@ -21,7 +21,7 @@ class SellerFactory extends Factory
             'id' => $this->faker->uuid,
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'document' => rand(11111111111, 99999999999),
+            'document' => rand(11111111,99999999),
             'password' => Hash::make('hashedpassword')
         ];
     }

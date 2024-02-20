@@ -23,7 +23,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY . /var/www
 
-RUN chown -R www-data:www-data /var/www/storage
+RUN chown -R www-data:www-data /var/www/
 
 WORKDIR /var/www
 

@@ -21,19 +21,20 @@ class TransactionController extends Controller
      */
     public function transfer(StoreTransactionRequest $request)
     {
-        try{
+        try {
             $result = $this->transactionService->handleTransaction($request->validated());
-            return response()->json($result);
+            return response()->json([
+                'message' => 'Your transaction was concluded, we have sent an email to the payee.',
+                'data' => $result
+            ]);
         } catch (TransactionDeniedException $exception) {
-            return response()->json(['errors' => ['message' => $exception->getMessage()]], 401);
+            return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());
         } catch (QueryException $queryException) {
-            return response()->json(['errors' => ['message' => $queryException->getMessage()]], 500);
+            return response()->json(['errors' => ['message' => $queryException->getMessage()]], $queryException->getCode());
         } catch (ModelNotFoundException $modelNotFoundException) {
-                return response()->json(['errors' => ['message' => $modelNotFoundException->getMessage()]], 404);
+            return response()->json(['errors' => ['message' => $modelNotFoundException->getMessage()]], $modelNotFoundException->getCode());
         } catch (\Exception $exception) {
             return response()->json(['errors' => ['message' =>  $exception->getMessage()]], 500);
         }
-
-        
     }
 }
