@@ -5,25 +5,36 @@ O projeto E-transfer é uma aplicação **simples e direta** que simula um ambie
 O projeto consiste em uma aplicação RESTFul em Laravel, rodando em uma ambiente de containers em Docker, e utiliza o banco de dados relacional para armazenamento de informações.
 
 ### Para configurar e executar o projeto é só seguir os simples passos:
+
+Antes de iniciar, é importante que você crie um arquivo **.env** caso não o tenha. No arquivo **.env.example** há um modelo do arquivo que possa ser criado, com variáveis e valores ideais para o seu ambiente.
+
 1 - Ao clonar o projeto, na raiz, execute o seguinte comando para monstar as imagens de container e executá-los em segundo plano: 
     
-> ```docker-compose up -d --build```
+```docker
+docker-compose up -d --build 
+```
+
+**Obs:** caso o script de "change owner" do Dockerfile não funcione corretamente, pode tentar executar o seguinte comando no terminal: 
+```docker  
+docker-compose exec app chmod -R 777 /var/www/storage 
+```
+
+Rodar esse comando, dá a permissão geral para qualquer usuário dentro da pasta storage, algo importante, já que nessa aplicação usamos escritas em Log. Entretanto, essa permissão em específico não é recomendável de se utilizar fora de ambientes de desenvolvimento/teste.
 
 2 - Uma vez que o seu ambiente docker estiver buildado e rodando certinho, acessa o bash, utilizando o comando: 
 
 > ```docker exec -it laravel_app bash``` (ou, no lugar do "laravel_app", o nome do container da sua aplicação)
 
+
 3 - Uma vez dentro do console do bash, exexcute o seguinte comando para instalar as dependências do projeto: 
 
 > ```composer install```
 
-4 - Uma vez que as depedências do projeto estiverem instaladas, você precisará criar um arquivo **.env** caso não o tenha. No arquivo **.env.example** há um modelo do arquivo que possa ser criado, com variáveis e valores ideais para o seu ambiente. 
-
-E ao criar o .env, e configurar dados de acesso ao banco de dados, execute o seguinte comando no terminal para rodar as migrations e popular o banco de dados: 
+4 - Uma vez que as depedências do projeto estiverem instaladas, e .env configurado, execute o seguinte comando no terminal para rodar as migrations e popular o banco de dados: 
 
 >```php artisan migrate```
 
-Execute também o seguinte comando:
+Execute também o seguinte comando, se preciso:
 
 > ```php artisan key:generate```
 
