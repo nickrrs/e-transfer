@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\TransactionDeniedException;
+use App\Exceptions\TransactionUnauthorizedException;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Services\Transaction\TransactionService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -31,8 +32,10 @@ class TransactionController extends Controller
             return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());
         } catch (QueryException $queryException) {
             return response()->json(['errors' => ['message' => $queryException->getMessage()]], $queryException->getCode());
-        } catch (ModelNotFoundException $modelNotFoundException) {
-            return response()->json(['errors' => ['message' => $modelNotFoundException->getMessage()]], $modelNotFoundException->getCode());
+        } catch (ModelNotFoundException $notFoundException) {
+            return response()->json(['errors' => ['message' => $notFoundException->getMessage()]], $notFoundException->getCode());
+        } catch (TransactionUnauthorizedException $authException) {
+            return response()->json(['errors' => ['message' => $authException->getMessage()]], $authException->getCode());
         } catch (\Exception $exception) {
             return response()->json(['errors' => ['message' =>  $exception->getMessage()]], 500);
         }

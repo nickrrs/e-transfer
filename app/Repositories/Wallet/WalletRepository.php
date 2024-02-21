@@ -8,8 +8,11 @@ use Ramsey\Uuid\Uuid;
 
 class WalletRepository implements WalletRepositoryInterface
 {
+    public function __construct(private Wallet $wallet)
+    {
+    }
 
-    public function create($entity)
+    public function create($entity): Wallet
     {
         $wallet = new Wallet();
 
@@ -23,15 +26,15 @@ class WalletRepository implements WalletRepositoryInterface
         return $wallet;
     }
 
-    public function indexByOwner($id)
+    public function search($walletId): Wallet
     {
-        $wallet = Wallet::where('owner_id', $id)->firstOrFail();
+        $wallet = $this->wallet->findOrFail($walletId);
         return $wallet;
     }
 
-    public function deposit($id, $value)
+    public function deposit($walletId, $value): Wallet
     {
-        $wallet = $this->indexByOwner($id);
+        $wallet = $this->search($walletId);
         $wallet->update([
             'balance' => $wallet->balance + $value
         ]);
@@ -39,18 +42,20 @@ class WalletRepository implements WalletRepositoryInterface
         return $wallet;
     }
 
-    public function withdraw($id, $value)
+    public function withdraw($walletId, $value): Wallet
     {
-        $wallet = $this->indexByOwner($id);
+        $wallet = $this->search($walletId);
         $wallet->update([
             'balance' => $wallet->balance - $value
         ]);
 
         return $wallet;
     }
-    public function delete($entity)
+    public function delete($entity): Wallet
     {
-        $wallet = Wallet::where('owner_id', $entity->id)->firstOrFail();
+        $wallet = $this->wallet->where('owner_id', $entity->id)->firstOrFail();
         $wallet->delete();
+
+        return $wallet;
     }
 }

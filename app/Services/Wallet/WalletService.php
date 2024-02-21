@@ -3,29 +3,35 @@
 namespace App\Services\Wallet;
 
 use App\Interfaces\Services\Wallet\WalletServiceInterface;
+use App\Models\Wallet;
 use App\Repositories\Wallet\WalletRepository;
 
 class WalletService implements WalletServiceInterface
 {
-
-    private $walletRepository;
-
-    public function __construct(WalletRepository $walletRepository)
+    public function __construct(private WalletRepository $walletRepository)
     {
-        $this->walletRepository = $walletRepository;
     }
 
-    public function newWallet($entity)
+    public function newWallet($entity): Wallet
     {
         return $this->walletRepository->create($entity);
     }
 
-    public function findOwnerWallet($id)
+    public function findWallet($walletId): Wallet
     {
-        return $this->walletRepository->indexByOwner($id);
+        return $this->walletRepository->search($walletId);
     }
-    
-    public function deleteWallet($entity)
+
+    public function deposit($walletId, $value): Wallet
+    {
+        return $this->walletRepository->deposit($walletId, $value);
+    }
+
+    public function withdraw($walletId, $value): Wallet
+    {
+        return $this->walletRepository->withdraw($walletId, $value);
+    }
+    public function deleteWallet($entity): Wallet
     {
         return $this->walletRepository->delete($entity);
     }

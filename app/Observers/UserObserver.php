@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class UserObserver
 {
 
-    public function __construct(private WalletService $walletService){
+    public function __construct(private WalletService $walletService, private Log $log){
 
     }
 
@@ -22,18 +22,10 @@ class UserObserver
         try{
             $this->walletService->newWallet($user);
         } catch(QueryException $queryException) {
-            Log::critical("[User was created without a wallet. Error while trying to create user's wallet]", [
+            $this->log->critical("[User was created without a wallet. Error while trying to create user's wallet]", [
                 'message' => $queryException->getMessage()
             ]);
         }
-    }
-
-    /**
-     * Handle the User "updated" event.
-     */
-    public function updated(User $user): void
-    {
-        //
     }
 
     /**
@@ -44,25 +36,9 @@ class UserObserver
         try{
             $this->walletService->deleteWallet($user);
         } catch(QueryException $queryException) {
-            Log::critical("[Error while trying to delete deleted user's wallet]", [
+            $this->log->critical("[Error while trying to delete deleted user's wallet]", [
                 'message' => $queryException->getMessage()
             ]);
         }
-    }
-
-    /**
-     * Handle the User "restored" event.
-     */
-    public function restored(User $user): void
-    {
-        //
-    }
-
-    /**
-     * Handle the User "force deleted" event.
-     */
-    public function forceDeleted(User $user): void
-    {
-        //
     }
 }

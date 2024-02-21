@@ -11,7 +11,7 @@ class TransactionAuthenticatorService
     private const BASE_URI = 'https://run.mocky.io';
     private const ENDPOINT = 'v3/5794d450-d2e2-4412-8131-73d0293ac1cc';
 
-    public function __construct(private Client $client)
+    public function __construct(private Client $client, private Log $log)
     {
         $this->client = new Client([
             'base_uri' => self::BASE_URI,
@@ -27,7 +27,7 @@ class TransactionAuthenticatorService
             
             return $body->message === 'Autorizado';
         } catch (GuzzleException $exception) {
-            Log::critical("[It was not possible to authorize the transaction, please read the error message !]", [
+            $this->log->critical("[It was not possible to authorize the transaction, please read the error message !]", [
                 'message' => $exception->getMessage()
             ]);
             return false;

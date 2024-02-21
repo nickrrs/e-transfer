@@ -14,7 +14,7 @@ class SendUserNotificationListener
     /**
      * Create the event listener.
      */
-    public function __construct(private SendMailService $sendMailService)
+    public function __construct(private SendMailService $sendMailService, private Log $log)
     {
         //
     }
@@ -27,7 +27,7 @@ class SendUserNotificationListener
 
         if (!$this->sendMailService->isNotificationServiceStable()) {
             // handle job for emails
-            Log::critical("[The notification service is unable at the moment]");
+            $this->log->critical("[The notification service is unable at the moment]");
         }
 
         Mail::to($event->payeeInfo->email)->send(new SendUserNotificationMail($event->transaction));

@@ -7,7 +7,11 @@ use App\Models\Transaction;
 
 class TransactionRepository implements TransactionRepositoryInterface
 {
-    public function create($payload): Transaction{
-        return Transaction::create($payload);
+    public function __construct(private Transaction $transaction)
+    {
+    }
+    public function create($payload): Transaction
+    {
+        return $this->transaction->create($payload);
     }
 }
