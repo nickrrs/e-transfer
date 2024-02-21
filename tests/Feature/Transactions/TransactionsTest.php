@@ -3,6 +3,7 @@
 use App\Events\SendUserNotification;
 use App\Models\Seller;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Repositories\Wallet\WalletRepository;
 use App\Services\TransactionAuthenticator\TransactionAuthenticatorService;
 use App\Services\Wallet\WalletService;
@@ -14,12 +15,10 @@ class TransactionsTest extends TestCase
 {
     use RefreshDatabase;
     private $walletService;
-    //stub for wallet service
     protected function setUp(): void
     {
         parent::setUp();
-        // Substitua WalletRepository por um stub, se necessário
-        $this->walletService = new WalletService(new WalletRepository());
+        $this->walletService = new WalletService(new WalletRepository(new Wallet()));
     }
 
     public function testUserShouldHaveEnoughMoneyToMakeATransaction()

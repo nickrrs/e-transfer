@@ -18,9 +18,7 @@ use Ramsey\Uuid\Uuid;
 class TransactionService implements TransactionServiceInterface
 {
     public function __construct(
-        private DB $database,
         private Log $log,
-        private SendUserNotification $notificationEvent,
         private WalletService $walletService,
         private TransactionRepository $transactionRepository,
         private TransactionAuthenticatorService $authenticatorService,
@@ -99,12 +97,12 @@ class TransactionService implements TransactionServiceInterface
 
         $payeeInfo = $this->getWallet($payload['payee_wallet_id'])->owner;
 
-        return $this->database->transaction(function () use ($payload, $payeeInfo) {
+        return DB::transaction(function () use ($payload, $payeeInfo) {
             $transaction = $this->transactionRepository->create($payload);
             $this->walletService->withdraw($payload['payer_wallet_id'], $payload['amount']);
             $this->walletService->deposit($payload['payee_wallet_id'], $payload['amount']);
 
-            $this->notificationEvent->dispatch($payeeInfo, $transaction);
+            SendUserNotification::dispatch($payeeInfo, $transaction);
 
             return $transaction;
         });

@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Transaction;
 
 use App\Exceptions\TransactionDeniedException;
 use App\Exceptions\TransactionUnauthorizedException;
+use App\Http\Controllers\Controller;
+use App\Http\DTO\Transaction\TransactionOutputDTO;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Services\Transaction\TransactionService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Log;
+
 
 class TransactionController extends Controller
 {
@@ -24,10 +26,8 @@ class TransactionController extends Controller
     {
         try {
             $result = $this->transactionService->handleTransaction($request->validated());
-            return response()->json([
-                'message' => 'Your transaction was concluded, we have sent an email to the payee.',
-                'data' => $result
-            ]);
+            $outputDTO = new TransactionOutputDTO($result);
+            return response()->json($outputDTO->response());
         } catch (TransactionDeniedException $exception) {
             return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());
         } catch (QueryException $queryException) {
