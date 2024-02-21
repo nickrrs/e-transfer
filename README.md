@@ -1,66 +1,85 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# E-transfer
+O projeto E-transfer é uma aplicação **simples e direta** que simula um ambiente de transação monetária entre indivíduos, podendo eles ser uma pessoa física (Usuário) ou Lojista (Seller).
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Documentação de Projeto
+O projeto consiste em uma aplicação RESTFul em Laravel, rodando em uma ambiente de containers em Docker, e utiliza o banco de dados relacional para armazenamento de informações.
 
-## About Laravel
+### Para configurar e executar o projeto é só seguir os simples passos:
+1 - Ao clonar o projeto, na raiz, execute o seguinte comando para monstar as imagens de container e executá-los em segundo plano: 
+    
+> ```docker-compose up -d --build```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+2 - Uma vez que o seu ambiente docker estiver buildado e rodando certinho, acessa o bash, utilizando o comando: 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+> ```docker exec -it laravel_app bash``` (ou, no lugar do "laravel_app", o nome do container da sua aplicação)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3 - Uma vez dentro do console do bash, exexcute o seguinte comando para instalar as dependências do projeto: 
 
-## Learning Laravel
+> ```composer install```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+4 - Uma vez que as depedências do projeto estiverem instaladas, você precisará criar um arquivo **.env** caso não o tenha. No arquivo **.env.example** há um modelo do arquivo que possa ser criado, com variáveis e valores ideais para o seu ambiente. 
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+E ao criar o .env, e configurar dados de acesso ao banco de dados, execute o seguinte comando no terminal para rodar as migrations e popular o banco de dados: 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+>```php artisan migrate```
 
-## Laravel Sponsors
+Execute também o seguinte comando:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+> ```php artisan key:generate```
 
-### Premium Partners
+5 - Prontinho, seu ambiente de desenvolvimento está configurado, caso queira parar a execução dos containers, execute o seguinte comando:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```docker-compose stop```
 
-## Contributing
+### Como funciona a API ?
+A aplicação atualmente conta apenas com uma endpoint para execução da funcionalidade de transação monetária entre usuários. Porém, não há um controle de cadastro desses usuários e nem um fluxo de autenticação para os mesmos, assim como para as rotas.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Para fins de testes da aplicação, se for do seu interesse, pode rodar o seguinte comando para executar todos os testes já montados para o sistema, lembre-se de executar o comando estando no console bash do docker: 
 
-## Code of Conduct
+> ```php artisan test```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Mas caso queira testar o fluxo da funcionalidade de uma forma manual, primeiro popule o banco de dados, utilizando o seguinte comando:
 
-## Security Vulnerabilities
+>```php artisan db:seed```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Uma vez com o banco populado, pode pegar dados de exemplo para utilizar na endpoint.
 
-## License
+#### Endpoint de Transação Monetária:
+#### GET /api/transfer
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Exemplo de corpo de requisição: 
+```json
+{
+	"payer_wallet_id": "056de788-e999-4fa3-890d-d387dc389917",
+	"payee_wallet_id": "cff8321d-efc4-4973-82b0-7a3aa743015b",
+	"amount": 12
+}
+```
+
+Exemplo de resposta da requisição bem sucedida: 
+```json
+{
+	"message": "Your transaction was concluded, we have sent an email to the payee.",
+	"data": {
+		"amount": 12,
+		"updated_at": "2024-02-21T16:26:01.000000Z",
+		"created_at": "2024-02-21T16:26:01.000000Z"
+	}
+}
+```
+
+## Roadmap e Possíveis Melhorias
+
+
+- [ ] Implementação de fluxo de cadastros de usuários e lojistas (obvio)
+
+- [ ] Implementação de flag nas Wallets, para quando um usuário for inativo/excluído do sistema, manter a Wallet no banco, mas inativada. Importante para manter no banco o histórico de transações feitas utilizando aquela carteira.
+
+- [ ] Implementar fluxo de Autenticação e Autorização, para segurança, gerenciamento de sessão e controle das rotas. Isso inclui também verificar e validar permissões de acesso para diferentes recursos da API.
+
+- [ ] Injeção automatica de dependências das classes utilizando o AppServiceProvider,
+bindando as classes utilizadas.
+
+- [ ] Implementar jobs em filas, queueable para o Listeners, para e-mails que não foram enviados por instabilidade de serviços externos.
+
+- [ ] Implementação através de um servidor remoto para realizar implementação de um Cron, ou talvez um serviço em Lambda, para envio dos Jobs/Listeners em fila, para e-mails que não foram enviados pela instabilidade do serviço.
