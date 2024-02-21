@@ -14,14 +14,17 @@ use Tests\TestCase;
 class TransactionsTest extends TestCase
 {
     use RefreshDatabase;
-    private $walletService;
+    private WalletService $walletService;
+    private TransactionAuthenticatorService $mock;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->walletService = new WalletService(new WalletRepository(new Wallet()));
+        $this->mock = Mockery::mock(TransactionAuthenticatorService::class);
     }
 
-    public function testUserShouldHaveEnoughMoneyToMakeATransaction()
+    public function testUserShouldHaveEnoughMoneyToMakeATransaction(): void
     {
         $userPayer = User::factory()->create();
         $userPayee = User::factory()->create();
@@ -37,7 +40,7 @@ class TransactionsTest extends TestCase
         $request->assertStatus(422);
     }
 
-    public function testSellersShouldNotBeAbleToMakeATransaction()
+    public function testSellersShouldNotBeAbleToMakeATransaction(): void
     {
         $userPayer = Seller::factory()->create();
         $userPayee = User::factory()->create();
@@ -53,7 +56,7 @@ class TransactionsTest extends TestCase
         $request->assertStatus(401);
     }
 
-    public function testUserShouldNotMakeATransactionToHimself()
+    public function testUserShouldNotMakeATransactionToHimself(): void
     {
         $user = Seller::factory()->create();
 
@@ -68,7 +71,7 @@ class TransactionsTest extends TestCase
         $request->assertStatus(403);
     }
 
-    public function testPayeerMustHaveAWalletToMakeATransaction()
+    public function testPayeerMustHaveAWalletToMakeATransaction(): void
     {
         $userPayee = User::factory()->create();
 
@@ -83,7 +86,7 @@ class TransactionsTest extends TestCase
         $request->assertStatus(404);
     }
 
-    public function testPayeeMustHaveAWalletToMakeATransaction()
+    public function testPayeeMustHaveAWalletToMakeATransaction(): void
     {
         $userPayer = User::factory()->create();
 
@@ -98,7 +101,7 @@ class TransactionsTest extends TestCase
         $request->assertStatus(404);
     }
 
-    public function testUserCanTransferMoney()
+    public function testUserCanTransferMoney(): void
     {
         $userPayer = User::factory()->create();
         $this->walletService->deposit($userPayer->wallet->id, 66);
@@ -129,7 +132,7 @@ class TransactionsTest extends TestCase
         ]);
     }
 
-    public function testUnauthorizedTransactionsCanNotBeMade()
+    public function testUnauthorizedTransactionsCanNotBeMade(): void
     {
         $userPayer = User::factory()->create();
         $this->walletService->deposit($userPayer->wallet->id, 66);
@@ -141,11 +144,9 @@ class TransactionsTest extends TestCase
             'amount' => 33
         ];
 
-        $mock = Mockery::mock(TransactionAuthenticatorService::class);
-        $mock->shouldReceive('authorizeTransaction')->once()->andReturn(false);
+        $this->mock->shouldReceive('authorizeTransaction')->once()->andReturn(false);
 
-        $this->app->instance(TransactionAuthenticatorService::class, $mock);
-
+        $this->instance(TransactionAuthenticatorService::class, $this->mock);
 
         $response = $this->post(route('transaction.transfer'), $payload);
 

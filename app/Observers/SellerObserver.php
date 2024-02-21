@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 class SellerObserver
 {
-    public function __construct(private WalletService $walletService, private Log $log)
+    public function __construct(private WalletService $walletService)
     {
     }
 
@@ -21,7 +21,7 @@ class SellerObserver
         try {
             $this->walletService->newWallet($seller);
         } catch (QueryException $queryException) {
-            $this->log->critical("[Seller was created without a wallet. Error while trying to create seller's wallet]", [
+            Log::critical("[Seller was created without a wallet. Error while trying to create seller's wallet]", [
                 'message' => $queryException->getMessage()
             ]);
         }
@@ -35,7 +35,7 @@ class SellerObserver
         try{
             $this->walletService->deleteWallet($seller);
         } catch(QueryException $queryException) {
-            $this->log->critical("[Error while trying to delete deleted seller's wallet]", [
+            Log::critical("[Error while trying to delete deleted seller's wallet]", [
                 'message' => $queryException->getMessage()
             ]);
         }

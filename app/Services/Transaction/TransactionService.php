@@ -7,6 +7,7 @@ use App\Exceptions\TransactionDeniedException;
 use App\Exceptions\TransactionUnauthorizedException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Interfaces\Services\Transaction\TransactionServiceInterface;
+use App\Models\Transaction;
 use App\Models\Wallet;
 use App\Repositories\Transaction\TransactionRepository;
 use App\Services\TransactionAuthenticator\TransactionAuthenticatorService;
@@ -18,14 +19,13 @@ use Ramsey\Uuid\Uuid;
 class TransactionService implements TransactionServiceInterface
 {
     public function __construct(
-        private Log $log,
         private WalletService $walletService,
         private TransactionRepository $transactionRepository,
         private TransactionAuthenticatorService $authenticatorService,
     ) {
     }
 
-    public function handleTransaction(array $data)
+    public function handleTransaction(array $data): Transaction
     {
         if (!$this->getWallet($data['payer_wallet_id'])) {
             throw new ModelNotFoundException('The payer wallet was nout found on the system.', 404);
@@ -74,19 +74,19 @@ class TransactionService implements TransactionServiceInterface
         return false;
     }
 
-    public function getWallet($walletId)
+    public function getWallet($walletId): Wallet | bool
     {
         try {
             return $this->walletService->findWallet($walletId);
         } catch (\Exception $e) {
-            $this->log->error("[A wallet was not found on the database during transaction operation]", [
+            Log::error("[A wallet was not found on the database during transaction operation]", [
                 'message' => $e->getMessage()
             ]);
             return false;
         }
     }
 
-    public function transaction(array $data)
+    public function transaction(array $data): Transaction
     {
         $payload = [
             'id' => Uuid::uuid4()->toString(),

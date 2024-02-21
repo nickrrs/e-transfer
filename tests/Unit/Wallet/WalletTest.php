@@ -9,24 +9,26 @@ class WalletTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testCreatedUserShouldHaveAWallet()
+    public function testCreatedUserShouldHaveAWallet(): void
     {
         $user = User::factory()->create();
-        
+
         $this->assertDatabaseHas('wallets', [
             'owner_id' => $user->id,
         ]);
     }
 
-    public function testCreatedSellerShouldHaveAWallet(){
+    public function testCreatedSellerShouldHaveAWallet(): void
+    {
         $seller = Seller::factory()->create();
-        
+
         $this->assertDatabaseHas('wallets', [
             'owner_id' => $seller->id,
         ]);
     }
 
-    public function testADeletedUserOrSellerShouldHaveHisWalletDeleted(){
+    public function testADeletedUserOrSellerShouldHaveHisWalletDeleted(): void
+    {
         $user = User::factory()->create();
         $user->delete();
 
@@ -34,10 +36,11 @@ class WalletTest extends TestCase
             'owner_id' => $user->id,
         ]);
     }
-    
-    public function testANewWalletShouldHaveAnAmountOfZero(){
+
+    public function testANewWalletShouldHaveAnAmountOfZero(): void
+    {
         $user = User::factory()->create();
-        
+
         $this->assertDatabaseHas('wallets', [
             'owner_id' => $user->id,
             'balance' => 0

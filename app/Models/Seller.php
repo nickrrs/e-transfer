@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Seller extends Model
 {
@@ -27,7 +28,7 @@ class Seller extends Model
         'password'
     ];
     
-    public function wallet()
+    public function wallet(): MorphOne
     {
         return $this->morphOne(Wallet::class, 'owner');
     }

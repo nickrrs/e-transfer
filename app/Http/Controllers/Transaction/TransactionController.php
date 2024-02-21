@@ -10,11 +10,10 @@ use App\Http\Requests\StoreTransactionRequest;
 use App\Services\Transaction\TransactionService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
-
+use Illuminate\Http\JsonResponse;
 
 class TransactionController extends Controller
 {
-
     public function __construct(private TransactionService $transactionService)
     {
     }
@@ -22,7 +21,7 @@ class TransactionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function transfer(StoreTransactionRequest $request)
+    public function transfer(StoreTransactionRequest $request): JsonResponse
     {
         try {
             $result = $this->transactionService->handleTransaction($request->validated());

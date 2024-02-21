@@ -12,7 +12,7 @@ class SendMailService implements SendMailServiceInterface
     private const BASE_URI = 'https://run.mocky.io';
     private const ENDPOINT = 'v3/54dc2cf1-3add-45b5-b5a9-6bf7e7f1f4a6';
 
-    public function __construct(private Client $client, private Log $log)
+    public function __construct(private Client $client)
     {
         $this->client = new Client([
             'base_uri' => self::BASE_URI,
@@ -27,7 +27,7 @@ class SendMailService implements SendMailServiceInterface
             $body = json_decode($response->getBody());
             return $body->message === true;
         } catch (GuzzleException $exception) {
-            $this->log->critical("[It was not possible to authorize the transaction, please read the error message !]", [
+            Log::critical("[It was not possible to authorize the transaction, please read the error message !]", [
                 'message' => $exception->getMessage()
             ]);
             

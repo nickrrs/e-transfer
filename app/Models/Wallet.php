@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Wallet extends Model
 {
@@ -24,22 +27,22 @@ class Wallet extends Model
         'balance'
     ];
 
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function seller()
+    public function seller(): BelongsTo
     {
         return $this->belongsTo(Seller::class);
     }
 
-    public function transactions()
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
