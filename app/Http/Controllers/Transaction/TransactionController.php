@@ -18,14 +18,13 @@ class TransactionController extends Controller
     {
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function transfer(StoreTransactionRequest $request): JsonResponse
     {
         try {
             $result = $this->transactionService->handleTransaction($request->validated());
-            $outputDTO = new TransactionOutputDTO($result);
+
+            $outputDTO = TransactionOutputDTO::fromArray($result->toArray());
+            
             return response()->json($outputDTO->response());
         } catch (TransactionDeniedException $exception) {
             return response()->json(['errors' => ['message' => $exception->getMessage()]], $exception->getCode());

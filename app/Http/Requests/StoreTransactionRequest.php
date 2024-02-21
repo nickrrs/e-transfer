@@ -22,8 +22,8 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'payer_wallet_id' => 'required',
-            'payee_wallet_id' => 'required',
+            'payer_wallet_id' => 'required|string',
+            'payee_wallet_id' => 'required|string',
             'amount' => 'required|numeric'
         ];
     }

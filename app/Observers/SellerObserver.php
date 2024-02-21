@@ -13,9 +13,6 @@ class SellerObserver
     {
     }
 
-    /**
-     * Handle the Seller "created" event.
-     */
     public function created(Seller $seller): void
     {
         try {
@@ -27,9 +24,6 @@ class SellerObserver
         }
     }
 
-    /**
-     * Handle the Seller "deleted" event.
-     */
     public function deleted(Seller $seller): void
     {
         try{

@@ -27,36 +27,33 @@ class TransactionService implements TransactionServiceInterface
 
     public function handleTransaction(array $data): Transaction
     {
-        if (!$this->getWallet($data['payer_wallet_id'])) {
+        $payerWallet = $this->getWallet($data['payer_wallet_id']);
+        $payeeWallet = $this->getWallet($data['payee_wallet_id']);
+
+        if (! $payerWallet || ! $this->getWallet($data['payee_wallet_id'])) {
             throw new ModelNotFoundException('The payer wallet was nout found on the system.', 404);
         }
 
-        if (!$this->getWallet($data['payee_wallet_id'])) {
-            throw new ModelNotFoundException('The payee wallet was not found on the system', 404);
-        }
-
-        if ($data['payer_wallet_id'] == $data['payee_wallet_id']) {
+        if ($payerWallet == $payeeWallet) {
             throw new TransactionDeniedException('An user cant make a transaction to the same wallet.', 403);
         }
 
-        if (!$this->entityIsAuthorized($data['payer_wallet_id'])) {
+        if (! $this->entityIsAuthorized($payerWallet->id)) {
             throw new TransactionDeniedException('A seller is not authorized to make a transaction.', 401);
         }
 
-        $payerWallet = $this->getWallet($data['payer_wallet_id']);
-
-        if (!$this->canTransfer($payerWallet, $data['amount'])) {
+        if (! $this->canTransfer($payerWallet, $data['amount'])) {
             throw new TransactionDeniedException('The payer dont have enough money to make this transacion.', 422);
         }
 
-        if (!$this->authenticatorService->authorizeTransaction()) {
+        if (! $this->authenticatorService->authorizeTransaction()) {
             throw new TransactionUnauthorizedException('This transaction was not authorized, please try again later.', 401);
         }
 
         return $this->transaction($data);
     }
 
-    public function entityIsAuthorized($payerWalletId): bool
+    public function entityIsAuthorized(string $payerWalletId): bool
     {
         if ($this->getWallet($payerWalletId)->isOwnerAnUser()) {
             return true;
@@ -65,7 +62,7 @@ class TransactionService implements TransactionServiceInterface
         return false;
     }
 
-    public function canTransfer(Wallet $wallet, $value): bool
+    public function canTransfer(Wallet $wallet, float $value): bool
     {
         if ($wallet->balance >= $value) {
             return true;
@@ -74,7 +71,7 @@ class TransactionService implements TransactionServiceInterface
         return false;
     }
 
-    public function getWallet($walletId): Wallet | bool
+    public function getWallet(string $walletId): Wallet | bool
     {
         try {
             return $this->walletService->findWallet($walletId);
@@ -82,6 +79,7 @@ class TransactionService implements TransactionServiceInterface
             Log::error("[A wallet was not found on the database during transaction operation]", [
                 'message' => $e->getMessage()
             ]);
+
             return false;
         }
     }
@@ -99,6 +97,7 @@ class TransactionService implements TransactionServiceInterface
 
         return DB::transaction(function () use ($payload, $payeeInfo) {
             $transaction = $this->transactionRepository->create($payload);
+
             $this->walletService->withdraw($payload['payer_wallet_id'], $payload['amount']);
             $this->walletService->deposit($payload['payee_wallet_id'], $payload['amount']);
 

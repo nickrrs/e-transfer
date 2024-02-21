@@ -10,21 +10,13 @@ use Illuminate\Support\Facades\Mail;
 
 class SendUserNotificationListener
 {
-    /**
-     * Create the event listener.
-     */
     public function __construct(private SendMailService $sendMailService)
     {
-        //
     }
 
-    /**
-     * Handle the event.
-     */
     public function handle(SendUserNotification $event): void
     {
-        if (!$this->sendMailService->isNotificationServiceStable()) {
-            // handle job for emails
+        if (! $this->sendMailService->isNotificationServiceStable()) {
             Log::critical("[The notification service is unable at the moment]");
         }
 

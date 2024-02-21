@@ -10,7 +10,7 @@ class TransactionRepository implements TransactionRepositoryInterface
     public function __construct(private Transaction $transaction)
     {
     }
-    public function create($payload): Transaction
+    public function create(array $payload): Transaction
     {
         return $this->transaction->create($payload);
     }

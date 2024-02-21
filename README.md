@@ -71,7 +71,7 @@ Exemplo de resposta da requisição bem sucedida:
 ## Roadmap e Possíveis Melhorias
 
 
-- [ ] Implementação de fluxo de cadastros de usuários e lojistas (obvio)
+- [ ] Implementação de fluxo de cadastros de usuários e lojistas.
 
 - [ ] Implementação de flag nas Wallets, para quando um usuário for inativo/excluído do sistema, manter a Wallet no banco, mas inativada. Importante para manter no banco o histórico de transações feitas utilizando aquela carteira.
 

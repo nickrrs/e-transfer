@@ -31,6 +31,7 @@ class TransactionAuthenticatorService implements TransactionAuthenticatorService
             Log::critical("[It was not possible to authorize the transaction, please read the error message !]", [
                 'message' => $exception->getMessage()
             ]);
+            
             return false;
         }
     }

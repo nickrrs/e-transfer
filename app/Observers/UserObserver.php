@@ -14,9 +14,6 @@ class UserObserver
 
     }
 
-    /**
-     * Handle the User "created" event.
-     */
     public function created(User $user): void
     {
         try{
@@ -28,9 +25,6 @@ class UserObserver
         }
     }
 
-    /**
-     * Handle the User "deleted" event.
-     */
     public function deleted(User $user): void
     {
         try{

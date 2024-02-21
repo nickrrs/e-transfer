@@ -25,6 +25,7 @@ class SendMailService implements SendMailServiceInterface
             $response = $this->client->request('GET', self::ENDPOINT);
 
             $body = json_decode($response->getBody());
+            
             return $body->message === true;
         } catch (GuzzleException $exception) {
             Log::critical("[It was not possible to authorize the transaction, please read the error message !]", [

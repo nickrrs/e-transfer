@@ -3,6 +3,8 @@
 namespace App\Repositories\Wallet;
 
 use App\Interfaces\Repositories\Wallet\WalletRepositoryInterface;
+use App\Models\Seller;
+use App\Models\User;
 use App\Models\Wallet;
 use Ramsey\Uuid\Uuid;
 
@@ -12,29 +14,29 @@ class WalletRepository implements WalletRepositoryInterface
     {
     }
 
-    public function create($entity): Wallet
+    public function create(User | Seller $entity): Wallet
     {
-        $wallet = new Wallet();
+        $this->wallet->id = Uuid::uuid4()->toString();
+        $this->wallet->owner_id = $entity->id;
 
-        $wallet->id = Uuid::uuid4()->toString();
-        $wallet->owner_id = $entity->id;
-        $wallet->owner()->associate($entity);
-        $wallet->balance = 0;
+        $this->wallet->owner()->associate($entity);
+        
+        $this->wallet->balance = 0;
 
-        $wallet->save();
+        $this->wallet->save();
 
-        return $wallet;
+        return $this->wallet;
     }
 
-    public function search($walletId): Wallet
+    public function search(string $walletId): Wallet
     {
-        $wallet = $this->wallet->findOrFail($walletId);
-        return $wallet;
+        return $this->wallet->findOrFail($walletId);
     }
 
-    public function deposit($walletId, $value): Wallet
+    public function deposit(string $walletId, float $value): Wallet
     {
         $wallet = $this->search($walletId);
+        
         $wallet->update([
             'balance' => $wallet->balance + $value
         ]);
@@ -42,18 +44,20 @@ class WalletRepository implements WalletRepositoryInterface
         return $wallet;
     }
 
-    public function withdraw($walletId, $value): Wallet
+    public function withdraw(string $walletId, float $value): Wallet
     {
         $wallet = $this->search($walletId);
+
         $wallet->update([
             'balance' => $wallet->balance - $value
         ]);
 
         return $wallet;
     }
-    public function delete($entity): Wallet
+    public function delete(User | Seller $entity): Wallet
     {
         $wallet = $this->wallet->where('owner_id', $entity->id)->firstOrFail();
+        
         $wallet->delete();
 
         return $wallet;

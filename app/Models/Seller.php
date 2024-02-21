@@ -14,12 +14,6 @@ class Seller extends Model
     protected $keyType = 'string';
     public $incrementing = false;
 
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'id',
         'name',
