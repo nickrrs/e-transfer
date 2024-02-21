@@ -30,8 +30,8 @@ class TransactionService implements TransactionServiceInterface
         $payerWallet = $this->getWallet($data['payer_wallet_id']);
         $payeeWallet = $this->getWallet($data['payee_wallet_id']);
 
-        if (! $payerWallet || ! $this->getWallet($data['payee_wallet_id'])) {
-            throw new ModelNotFoundException('The payer wallet was nout found on the system.', 404);
+        if (! $payerWallet || ! $payeeWallet) {
+            throw new ModelNotFoundException('A wallet was not found on the system.', 404);
         }
 
         if ($payerWallet == $payeeWallet) {
